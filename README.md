@@ -48,9 +48,85 @@ To see this on Tableau We can create an Agg Function again for Debt and name it 
 
 ![image](https://github.com/user-attachments/assets/2511d3e1-735d-4201-acd3-faf66d04766c)
 
-For my next query I want to use division in an aggregate function but I am only returning 0's and 1's. This is due to my CSV being uploaded as a flat file with default column types. SSMS made my Billed, Allowed, and Paid amount integers, which means they will only return another int. To fix this these columns must be reclassified as flaots and the table recreated. 
+For my next query I want to use division in an aggregate function but I am only returning 0's and 1's. This is due to my CSV being uploaded as a flat file with default column types. SSMS made my Billed, Allowed, and Paid amount integers, which means they will only return another int. To fix this these columns must be reclassified as floats and the table recreated. New table:dbo.claim_datanew
 
-TO BE CONT
+We can use percentages to get another look at the data, for example, I want to see what percentage of a claim paid. I can accomplish this by dividing my paid amount by my allowed amount and multiplying that by 100. I am using the ROUND function to make the data more presentable, and using CONCAT to add a percentage. The function must also use SUM in order to be grouped properly. I decided to use this to see how our procedure codes were being paid: 
+
+select  procedure_code, CONCAT(ROUND((SUM(paid_amount) / SUM(allowed_amount) * 100),2),'%') as percent_paid from dbo.claim_datanew
+GROUP BY procedure_code
+ORDER BY percent_paid asc
+
+
+![image](https://github.com/user-attachments/assets/e452ddfe-dba1-4cd2-9dd1-2de491f901c8)
+
+Now I am curious on this percentage and how it changes throughout the months. I can accomplish this by using the same SUM function as earlier for debt and using MONTH to extract the month from our Date_Of_Service Column. I then group by Month to see the percentage that claims are paid throughout the Months. I upped the decimal amount on this example just so it was a little more detailed
+
+select DISTINCT MONTH(Date_of_Service) as month,  CONCAT(ROUND((SUM(paid_amount) / SUM(allowed_amount) * 100),5),'%') as percent_paid from dbo.claim_datanew
+GROUP BY MONTH(Date_of_Service)
+ORDER BY MONTH(Date_Of_Service) Desc
+
+![image](https://github.com/user-attachments/assets/4e35aae5-0b54-4943-96d0-6a7d73405178)
+
+As you can see this query wasnt extremely helpful, but if our dataset was larger we might gain some valuable insights. 
+
+What if I want to find out what our most used Diagnosis Codes are? This can be accomplished with a simple query. We just need to use the COUNT function to see how many Dx codes there are (Making sure to NOT use DISTINCT as we want to see how many of each dx exist). Then we can Group by our Dx codes and order by our COUNT to see how many of each Dx exist. I decided to use the TOP function to see only the top 10, this function usually goes by the syntax LIMIT. 
+
+![image](https://github.com/user-attachments/assets/17fa2f52-e280-4c8c-bd0e-97abc114252c)
+
+
+
+I want to get more specific and see what claims have an unusually high debt. I can accomplish this by Getting the percentage that a claim was paid by using our CONCAT from earlier but removing SUM. I can then simply use a WHERE close to remove any 100% paid and order by our CONCAT.
+
+select TOP 5 claim_id, patient_id, date_of_service, CONCAT(ROUND(((paid_amount) / (allowed_amount) * 100),5),'%') as paidpercent from dbo.claim_datanew
+WHERE CONCAT(ROUND(((paid_amount) / (allowed_amount) * 100),5),'%') != '100%'
+ORDER BY CONCAT(ROUND(((paid_amount) / (allowed_amount) * 100),5),'%') asc
+
+
+![image](https://github.com/user-attachments/assets/bcb94371-2c6a-4a32-ae1d-3087ee9f9e45)
+
+
+Upping our LIMIT/TOP to 50 shows that none of these are really outliers, but it is still interesting 
+
+![image](https://github.com/user-attachments/assets/985d4d00-17b9-4e9b-906a-55b377def23e)
+
+
+This data comes from multiple providers. Lets find out what providers are being paid and if anything looks weird. We can do this by simply updating our previous query 
+
+select   DISTINCT TOP 10  provider_id, CONCAT(ROUND((SUM(paid_amount) / SUM(allowed_amount) * 100),2),'%') as percent_paid from dbo.claim_datanew
+WHERE CONCAT(ROUND(((paid_amount) / (allowed_amount) * 100),5),'%') != '100%'
+GROUP BY provider_id
+ORDER BY  CONCAT(ROUND((SUM(paid_amount) / SUM(allowed_amount) * 100),2),'%') asc
+
+![image](https://github.com/user-attachments/assets/33a8cf80-f1f6-4aac-9242-c49a7d9b3f4a)
+
+In Tableau 
+
+![image](https://github.com/user-attachments/assets/157138df-a148-4893-8120-08d75379017e)
+
+
+What if I want to see how many times a Diagnosis/Procedure code combination shows up? This could be useful if we want to see how many similar claims we are sending out. 
+We can use the COUNT function and DISTINCT to find out: 
+
+select   DISTINCT Diagnosis_Code, Procedure_Code, Count(*) as Total from dbo.claim_datanew
+GROUP BY diagnosis_code, procedure_code
+ORDER BY total desc
+
+
+![image](https://github.com/user-attachments/assets/00865811-1fef-4f3f-9928-5fd44f6a272f)
+
+
+
+Now I want to see the amount of debt per combination. Lets add a SUM function :
+select   DISTINCT Diagnosis_Code, Procedure_Code, Count(*) as total, SUM(allowed_amount - paid_amount) AS total_debt  from dbo.claim_datanew
+GROUP BY diagnosis_code, procedure_code
+ORDER BY total_debt desc
+
+![image](https://github.com/user-attachments/assets/a7482ad3-7050-469b-8b8d-0f2437b87268)
+
+As you can see, nothing super interesting stands out. 
+
+
+
 
 
 
