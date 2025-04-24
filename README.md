@@ -35,7 +35,7 @@ I am choosing to order this data by the lowest debt to highest, but that is just
 
 ![image](https://github.com/user-attachments/assets/1821a0b6-4c67-4d51-ba6d-c2a87d2a19db)
 
-What if we want to find some more in depth info amount debts? I am curious about our Dx codes and how they are paying. I can use this query to find out what Dx codes are paying well and vice-versa:
+What if we want to find some more in depth info about  debts? I am curious about our Dx codes and how they are paying. I can use this query to find out what Dx codes are paying well and vice-versa:
 
 select   diagnosis_code, SUM(Allowed_Amount) - SUM(Paid_Amount) as Outstanding from dbo.claim_data
 GROUP BY Diagnosis_code
