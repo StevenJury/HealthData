@@ -130,12 +130,30 @@ ORDER BY total_debt desc
 
 As you can see, nothing super interesting stands out. 
 
+What if I want to find out what the Diagnosis Codes actually mean? I can connect this database with a  ICD10 spreadsheet to find out the descriptions. I will be using a LEFT JOIN for this as I want to see what NULL values show up. This is important later. 
+Our new ICD spreadsheet, obtained through https://www.cms.gov/medicare/coordination-benefits-recovery/overview/icd-code-lists, shows Diagnosis Codes without the Period string. For example A00.1 is A001. This can cause issues when using a JOIN, since we want to match the exact data between the two tables. To solve this I am going update our Diagnosis codes on our original table in order to remove the period. This can be accomplished with a simple UPDATE query: 
+
+update dbo.claim_data
+set Diagnosis_Code = replace(Diagnosis_Code, '.', '')
+
+Now that our data matches, I will proceed with a left join using our Diagnosis Code as the joining column: 
+
+
+select Diagnosis_Code, Description from dbo.claim_data c
+LEFT JOIN dbo.ICD10  I ON c.Diagnosis_Code = I.Dxcode
+
+![image](https://github.com/user-attachments/assets/97d59df6-01e1-4ed9-8db5-3f55dbf30901)
 
 
 
+Upon review I am getting some NULL values, that is weird, the ICD spreadsheet I have linked too should have every single valid ICD10 code for 2024. This is because my simulated claims spreadsheet is using some nonexistant ICD10 codes as well as some simplified codes. 
+When reviewing our claims that pulled descriptions, it looks like they all pulled the correct description from our new table. This can make viewing the overall data much easier
 
 
+![image](https://github.com/user-attachments/assets/87381370-bd6d-47c8-9501-801152428ba4)
 
+
+![image](https://github.com/user-attachments/assets/cf88c3ea-733f-4ce7-b51f-3938a986aded)
 
 
 
