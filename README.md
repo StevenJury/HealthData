@@ -48,6 +48,11 @@ To see this on Tableau We can create an Agg Function again for Debt and name it 
 
 ![image](https://github.com/user-attachments/assets/2511d3e1-735d-4201-acd3-faf66d04766c)
 
+Or reason codes: 
+
+![image](https://github.com/user-attachments/assets/677a7a25-9276-46a0-b2f2-9379eae60edc)
+
+
 For my next query I want to use division in an aggregate function but I am only returning 0's and 1's. This is due to my CSV being uploaded as a flat file with default column types. SSMS made my Billed, Allowed, and Paid amount integers, which means they will only return another int. To fix this these columns must be reclassified as floats and the table recreated. New table:dbo.claim_datanew
 
 We can use percentages to get another look at the data, for example, I want to see what percentage of a claim paid. I can accomplish this by dividing my paid amount by my allowed amount and multiplying that by 100. I am using the ROUND function to make the data more presentable, and using CONCAT to add a percentage. The function must also use SUM in order to be grouped properly. I decided to use this to see how our procedure codes were being paid: 
