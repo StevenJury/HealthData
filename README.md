@@ -146,7 +146,7 @@ LEFT JOIN dbo.ICD10  I ON c.Diagnosis_Code = I.Dxcode
 
 
 
-Upon review I am getting some NULL values, that is weird, the ICD spreadsheet I have linked too should have every single valid ICD10 code for 2024. This is because my simulated claims spreadsheet is using some nonexistant ICD10 codes as well as some simplified codes. 
+Upon review I am getting some NULL values, that is weird, the ICD spreadsheet I have linked to should have every single valid ICD10 code for 2024. This is because my simulated claims spreadsheet is using some nonexistant ICD10 codes as well as some simplified codes. 
 When reviewing our claims that pulled descriptions, it looks like they all pulled the correct description from our new table. This can make viewing the overall data much easier
 
 
@@ -155,9 +155,19 @@ When reviewing our claims that pulled descriptions, it looks like they all pulle
 
 ![image](https://github.com/user-attachments/assets/cf88c3ea-733f-4ce7-b51f-3938a986aded)
 
+We can use this new join with one of our previous queries to see our debt per Dx code and a description so we know what that code actually means. This can also be applied to Procedure codes. 
 
 
+select Diagnosis_Code, SUM(Billed_Amount) - SUM(Paid_Amount) as Debt, Description from dbo.claim_data c
+LEFT JOIN dbo.ICD10  I ON c.Diagnosis_Code = I.Dxcode
+WHERE Description IS NOT NULL
+GROUP BY Diagnosis_Code, Description
+ORDER BY DEBT desc
 
+![image](https://github.com/user-attachments/assets/81361425-d8a4-4b66-859d-765a394b8de3)
+
+
+TO BE CONT
 
 
 
