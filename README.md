@@ -26,10 +26,13 @@ My first step is determining the outstanding balance of our claims. This helps u
 select insurance_type, SUM(Allowed_Amount) - SUM(Paid_Amount) as Outstanding from dbo.claim_data
 GROUP BY Insurance_type
 ORDER BY Outstanding asc
+
 ![image](https://github.com/user-attachments/assets/3b150c9a-2a39-4446-94c0-4be58331ef50)
 
 
-I am choosing to order this data by the lowest debt to highest, but that is just a personal choice.  This table shows us that Self-Pay has the highest debt, which is not suprising. After this I can enter the same data on Tableau to see if it matches, For example I would create a pill for SUM(Allowed Amount) - SUM(Paid_Amount), move Insurance type to my column, and then select Text Table, Review of this shows that the data matches. I then can move my new Aggregate Function over to text and color, and choose red-green diverging reversed to show a deeper red for higher debt. 
+I am choosing to order this data by the lowest debt to highest, but that is just a personal choice.  This table shows us that Self-Pay has the highest debt, which is not suprising. After this I can enter the same data on Tableau to see if it matches, For example I would create a pill for SUM(Allowed Amount) - SUM(Paid_Amount), move Insurance type to my column, and then select Text Table, Review of this shows that the data matches. I then can move my new Aggregate Function over to text and color, and choose red-green diverging reversed to show a deeper red for higher debt.
+
+
 ![image](https://github.com/user-attachments/assets/1821a0b6-4c67-4d51-ba6d-c2a87d2a19db)
 
 What if we want to find some more in depth info amount debts? I am curious about our Dx codes and how they are paying. I can use this query to find out what Dx codes are paying well and vice-versa:
@@ -40,7 +43,19 @@ ORDER BY Outstanding desc
 
 ![image](https://github.com/user-attachments/assets/bc718961-e222-4287-9e1e-fc2d604a7610)
 
-As we can see Dx code A02.1 has the highest debt. My thought process now is why is that DX code being paid so little? I should research this further to see why and how we can fix this. 
+As we can see Dx code A02.1 has the highest debt. My thought process now is why is that DX code being paid so little? I should research this further to see why and how we can fix this.
+To see this on Tableau We can create an Agg Function again for Debt and name it 'Debt". and put in on the Rows and then put Dx code on the Column. This creates a bar graph showing all of the Dx codes and their respective debt. I decided to filter to debts higher than $300 and use the same color format as earlier. Once again our debt numbers match with our SQL Queries. This same exact process can also be done with procedure codes. 
+
+![image](https://github.com/user-attachments/assets/2511d3e1-735d-4201-acd3-faf66d04766c)
+
+For my next query I want to use division in an aggregate function but I am only returning 0's and 1's. This is due to my CSV being uploaded as a flat file with default column types. SSMS made my Billed, Allowed, and Paid amount integers, which means they will only return another int. To fix this these columns must be reclassified as flaots and the table recreated. 
+
+TO BE CONT
+
+
+
+
+
 
 
 
