@@ -180,7 +180,58 @@ ORDER BY COUNT(procedure_code) desc
 ![image](https://github.com/user-attachments/assets/94b37060-1b4c-4f13-b884-027740ece72a)
 
 
+I am going to move onto a new dataset now. This project starts with patient demographic and charges. Database obtained from https://www.kaggle.com/datasets/kalyankumarm/dataset.
+Uploaded onto SSMS with flat file type. 
+
+
+![image](https://github.com/user-attachments/assets/47df5c7f-0c9b-43fd-b58e-4a393f0f197c)
+
+
+Using select * to see what our data looks like: 
+
+![image](https://github.com/user-attachments/assets/a4da576d-1ec8-4701-bc94-4fba7066b1a1)
 
 
 
+First I am curious about charges by gender, I just want to see what gender is incurring more charges as this might be helpful data later on. 
+
+SELECT SUM(Charges) as totalcharges, sex FROM dbo.claimsdata2
+GROUP BY sex
+
+As we can see from this males have more charges than female. 
+
+![image](https://github.com/user-attachments/assets/a820fd5e-c806-4f3c-890e-87c53fef5f77)
+
+
+Now I am curious about how our charges relate to the sex and age of the patient. This can be useful for predicting future charges for at risk demographics. I want to count the SUM of my charges and then group by age and sex like this: 
+
+SELECT DISTINCT SUM(Charges) as totalcharges, sex,  age FROM dbo.claimsdata2
+GROUP BY age, sex
+ORDER BY totalcharges desc
+
+![image](https://github.com/user-attachments/assets/0c9a8069-3580-4d1e-a83e-32c56b0910fa)
+
+
+
+As we can see, males aged 19 are seeing the highest charges, interesting. 
+
+Now I want to see how our charges look depending on how many kids a person has. To do this I am going to do a CASE statement. I could edit this to be more detailed if I wanted charges for each amount of kids, but I will just do two categories for now: 
+
+SELECT 
+	CASE 
+		WHEN children >= 3 THEN '3 or More' 
+		WHEN children < 3 THEN 'Less than 3' 
+END AS Charges_PER_KID,
+		SUM(Charges) as totalcharges
+FROM dbo.claimsdata2
+GROUP BY 
+    CASE 
+        WHEN children >= 3 THEN '3 or More'
+        WHEN children < 3 THEN 'Less than 3'
+    END;
+
+
+![image](https://github.com/user-attachments/assets/923b6be0-77d9-4f9d-ad89-4a1413ebf3b8)
+
+As we can see 3 or more kids is showing more charges. 
 
