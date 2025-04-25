@@ -1,6 +1,8 @@
 # HealthData
 SQL + Tableau for Analyzing healthcare claim data
-This is a testing ground for SQL and Tableau data Analysis. Data used is from https://www.kaggle.com/datasets/abuthahir1998/synthetic-healthcare-claims-dataset. 
+This is a testing ground for SQL and Tableau data Analysis. Data used is from https://www.kaggle.com/datasets/abuthahir1998/synthetic-healthcare-claims-dataset.  
+https://www.cms.gov/medicare/coordination-benefits-recovery/overview/icd-code-lists
+https://www.kaggle.com/datasets/kalyankumarm/dataset
 
 CSV imported onto Tableau and SQL. I am using Microsoft SQL Server Management(SSMS). Table setup is as follows :
 
