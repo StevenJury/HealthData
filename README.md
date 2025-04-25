@@ -272,4 +272,33 @@ As expected, 60+ age bucket is being charged the most.
 
 
 
-TO BE CONT
+Now Im curious about the top 5 highest charged people per region, lets use a window function in order to rank people within their regions: 
+
+SELECT 
+    age,
+    sex,
+    bmi,
+    children,
+    smoker,
+    region,
+    charges
+FROM (
+    SELECT 
+        age,
+        sex,
+        bmi,
+        children,
+        smoker,
+        region,
+        charges,
+        ROW_NUMBER() OVER (PARTITION BY region ORDER BY charges DESC) AS rank_within_region
+    FROM dbo.claimsdata2
+) AS ranked
+WHERE rank_within_region <= 5
+ORDER BY region, rank_within_region;
+
+![image](https://github.com/user-attachments/assets/40216ff0-2a29-48d4-83ac-3a6799202d0b)
+
+
+This healthcare data can be crucial for getting a better in depth look at how claim processes can be improved. All of these SQL querys can be entered in Tableau to gain even further insights. 
+
