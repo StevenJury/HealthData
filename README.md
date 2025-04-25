@@ -166,8 +166,18 @@ ORDER BY DEBT desc
 
 ![image](https://github.com/user-attachments/assets/81361425-d8a4-4b66-859d-765a394b8de3)
 
+What if we want to find how many times a certain decription/dx code matches with a procedure code? We can simple count our procedure codes and group by description then procedure code. I am also making sure I put in a WHERE clause due to those NULLS we encountered earlier. 
 
-TO BE CONT
+select COUNT(procedure_code),  Description from dbo.claim_data c
+LEFT JOIN dbo.ICD10 I ON c.Diagnosis_Code = I.Dxcode 
+WHERE DESCRIPTION IS NOT NULL
+GROUP BY Description, procedure_code
+ORDER BY COUNT(procedure_code) desc
+
+
+![image](https://github.com/user-attachments/assets/94b37060-1b4c-4f13-b884-027740ece72a)
+
+
 
 
 
