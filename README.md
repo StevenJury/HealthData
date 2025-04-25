@@ -235,3 +235,41 @@ GROUP BY
 
 As we can see 3 or more kids is showing more charges. 
 
+I am curious about how many people we have per region as we might be able to use this data later 
+
+select SUM(charges) as total_charges, count(*) as total_people, region from dbo.claimsdata2
+GROUP BY region
+
+![image](https://github.com/user-attachments/assets/2c415b54-0bb2-4a30-ab97-3750c65f574f)
+
+
+
+Now lets see charges per age group. This can help us determine which age group is being charges the most on average:
+SELECT 
+    CASE 
+        WHEN age BETWEEN 18 AND 29 THEN '18-29'
+        WHEN age BETWEEN 30 AND 39 THEN '30-39'
+        WHEN age BETWEEN 40 AND 49 THEN '40-49'
+        WHEN age BETWEEN 50 AND 59 THEN '50-59'
+        WHEN age >= 60 THEN '60+'
+    END AS age_group,
+    AVG(charges) AS avg_charges
+FROM 
+    dbo.claimsdata2
+GROUP BY 
+    CASE 
+        WHEN age BETWEEN 18 AND 29 THEN '18-29'
+        WHEN age BETWEEN 30 AND 39 THEN '30-39'
+        WHEN age BETWEEN 40 AND 49 THEN '40-49'
+        WHEN age BETWEEN 50 AND 59 THEN '50-59'
+        WHEN age >= 60 THEN '60+'
+    END
+ORDER BY age_group;
+
+As expected, 60+ age bucket is being charged the most. 
+
+![image](https://github.com/user-attachments/assets/d1a3b55b-1fcd-4cea-b6d1-a3f8dcd10165)
+
+
+
+TO BE CONT
